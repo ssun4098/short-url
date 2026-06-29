@@ -18,10 +18,10 @@ jobs:
 
       - name: Run container
         run: |
-          docker stop my-spring-app || true
-          docker rm my-spring-app || true
-          docker run -d \
-            --name my-spring-app \
-            --restart unless-stopped \
-            -p 8080:8080 \
+          docker stop my-spring-app
+          docker rm my-spring-app
+          docker run -d `
+            --name my-spring-app `
+            --restart unless-stopped `
+            -p 8080:8080 `
             my-spring-app:latest
