@@ -38,3 +38,6 @@ out/
 
 *.yml
 *.properties
+
+# workflow 파일은 예외
+!.github/workflows/*.yml
