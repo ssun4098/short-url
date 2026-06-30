@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "short_url")
 public class ShortUrlEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "short_url", unique = true)
