@@ -23,5 +23,5 @@ jobs:
           docker run -d `
             --name my-spring-app `
             --restart unless-stopped `
-            -p 8080:8080 `
+            -p ${{SERVER_PORT}}:8080 `
             my-spring-app:latest
