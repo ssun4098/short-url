@@ -16,6 +16,7 @@ public class ShortUrlService {
     @Transactional
     public ShortUrlDto create(ShortUrlDto dto) {
         ShortUrlEntity result = repository.save(toEntity(dto));
+        repository.flush();
         log.info("short url entity created. id={}, originalUrl={}", result.getId(), result.getOriginalUrl());
 
         String shortUrl = Base62Generator.encode(result.getId());
