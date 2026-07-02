@@ -2,6 +2,7 @@ package com.ssun.shorturl.main;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,12 +17,17 @@ public class ShortUrlService {
     @Transactional
     public ShortUrlDto create(ShortUrlDto dto) {
         ShortUrlEntity result = repository.save(toEntity(dto));
-        repository.flush();
-        log.info("short url entity created. id={}, originalUrl={}", result.getId(), result.getOriginalUrl());
+        try {
+            repository.flush();
+            log.info("short url entity created. id={}, originalUrl={}", result.getId(), result.getOriginalUrl());
 
-        String shortUrl = Base62Generator.encode(result.getId());
-        result.generateShortUrl(shortUrl);
-        log.info("short url updated. id={}, shortUrl={}", result.getId(), shortUrl);
+            String shortUrl = Base62Generator.encode(result.getId());
+            result.generateShortUrl(shortUrl);
+            repository.flush();
+            log.info("short url updated. id={}, shortUrl={}", result.getId(), shortUrl);
+        } catch (DataIntegrityViolationException e) {
+            throw new ShortUrlConflictException(e.getMessage(), result.getId(), result.getShortUrl(), e);
+        }
 
         return toDto(result);
     }

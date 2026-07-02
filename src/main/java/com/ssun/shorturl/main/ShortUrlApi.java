@@ -1,8 +1,8 @@
 package com.ssun.shorturl.main;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -38,9 +38,10 @@ public class ShortUrlApi {
                 .body("URL에 잘못된 문자열이 있습니다.\n 0~9, a~z, A~Z만 허용합니다.");
     }
 
-    @ExceptionHandler(exception = DataIntegrityViolationException.class)
-    public ResponseEntity<String> conflict(DataIntegrityViolationException e) {
-        log.error("short url creation failed due to data integrity violation", e);
+    @ExceptionHandler(exception = ShortUrlConflictException.class)
+    public ResponseEntity<String> conflict(ShortUrlConflictException e, HttpServletRequest request) {
+        log.error("short url creation failed due to data integrity violation. requestId={}, id={}, shortUrl={}",
+                request.getHeader("X-Request-Id"), e.getId(), e.getShortUrl());
         return ResponseEntity.status(HttpStatus.CONFLICT)
                 .body("에러가 발생하였습니다. 로그를 확인해주세요.");
     }
