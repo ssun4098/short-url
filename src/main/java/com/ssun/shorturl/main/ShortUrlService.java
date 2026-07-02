@@ -1,11 +1,13 @@
 package com.ssun.shorturl.main;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class ShortUrlService {
@@ -14,7 +16,12 @@ public class ShortUrlService {
     @Transactional
     public ShortUrlDto create(ShortUrlDto dto) {
         ShortUrlEntity result = repository.save(toEntity(dto));
-        result.generateShortUrl(Base62Generator.encode(result.getId()));
+        log.info("short url entity created. id={}, originalUrl={}", result.getId(), result.getOriginalUrl());
+
+        String shortUrl = Base62Generator.encode(result.getId());
+        result.generateShortUrl(shortUrl);
+        log.info("short url updated. id={}, shortUrl={}", result.getId(), shortUrl);
+
         return toDto(result);
     }
 
